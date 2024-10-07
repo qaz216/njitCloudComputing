@@ -3,6 +3,7 @@ package com.njit.aryeh;
 import java.util.List;
 
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.rekognition.RekognitionClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
@@ -24,13 +25,20 @@ public class App3 {
 		// Create a ProfileCredentialsProvider that reads from the default credentials file
         ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create();
         
+		RekognitionClient rekClient = RekognitionClient.builder()
+                .credentialsProvider(credentialsProvider)
+                .region(Region.US_EAST_1)
+                .build();
+        
         System.out.println("provide: "+credentialsProvider.toString());
 
         // Create an S3 client using the credentials provider
+        /*
         S3Client s3 = S3Client.builder()
                 .region(Region.US_EAST_1)
                 .credentialsProvider(credentialsProvider)
                 .build();
+		*/
         
         S3Client s3Client = S3Client.builder()
                 .region(region)
