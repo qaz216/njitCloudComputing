@@ -35,7 +35,7 @@ public class App {
         S3Client s3Client = S3Client.builder()
                 .region(region)
                 .build();
-        
+
         ListObjectsV2Request request = ListObjectsV2Request.builder()
                 .bucket(bucketName)
                 .build();
