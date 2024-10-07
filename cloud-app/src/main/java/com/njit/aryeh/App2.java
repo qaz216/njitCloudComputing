@@ -39,8 +39,9 @@ public class App2 {
                 .build();
 		try {
 			
+			ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create();
 			RekognitionClient rekClient = RekognitionClient.builder()
-	                .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+	                .credentialsProvider(credentialsProvider)
 	                .region(Region.US_EAST_1)
 	                .build();
 
