@@ -12,11 +12,18 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.rekognition.RekognitionClient;
+import software.amazon.awssdk.services.rekognition.model.DetectLabelsRequest;
+import software.amazon.awssdk.services.rekognition.model.DetectLabelsResponse;
+import software.amazon.awssdk.services.rekognition.model.Image;
+import software.amazon.awssdk.services.rekognition.model.Label;
 
 /**
  * Hello world!
@@ -31,6 +38,12 @@ public class App2 {
                 .region(Region.US_EAST_1)
                 .build();
 		try {
+			
+			RekognitionClient rekClient = RekognitionClient.builder()
+	                .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+	                .region(Region.US_EAST_1)
+	                .build();
+
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
@@ -44,6 +57,24 @@ public class App2 {
 
             byte[] bytes =responseBytes.readAllBytes();
             System.out.println("Object bytes length: " + bytes.length);
+            
+            SdkBytes sourceBytes = SdkBytes.fromByteArray(bytes);
+            Image souImage = Image.builder()
+                    .bytes(sourceBytes)
+                    .build();
+            
+            DetectLabelsRequest detectLabelsRequest = DetectLabelsRequest.builder()
+                    .image(souImage)
+                    .maxLabels(10)
+                    .build();
+
+
+            DetectLabelsResponse labelsResponse = rekClient.detectLabels(detectLabelsRequest);
+            
+            List<Label> labels = labelsResponse.labels();
+            for(Label label : labels) {
+            	System.out.println("label: "+label.name());
+            }
 
 
 
