@@ -7,11 +7,14 @@ import java.util.List;
 
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
-
+import software.amazon.awssdk.core.ResponseBytes;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
@@ -23,7 +26,34 @@ public class App2 {
 	public static void main(String[] args) {
 		String bucketName = "njit-cs-643";
 		String key = "1.jpg";
+		
+		S3Client s3Client = S3Client.builder()
+                .region(Region.US_EAST_1)
+                .build();
+		try {
+            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
 
+            //ResponseBytes<GetObjectResponse> responseBytes = s3Client.getObject(getObjectRequest);
+            //ResponseBytes<GetObjectResponse> s = s3Client.getObjectAsBytes(getObjectRequest);
+            
+            ResponseInputStream<GetObjectResponse> responseBytes = s3Client.getObject(getObjectRequest);
+            
+
+            byte[] bytes =responseBytes.readAllBytes();
+            System.out.println("Object bytes length: " + bytes.length);
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            s3Client.close();
+        }
+
+		/*
 		S3Client s3Client = S3Client.builder()
 			      .region(Region.US_EAST_1)
 			      .build();
@@ -39,5 +69,6 @@ public class App2 {
 			    contents.stream().forEach(System.out::println);
 			    
 			    s3Client.close();
+		 */
 	}
 }
