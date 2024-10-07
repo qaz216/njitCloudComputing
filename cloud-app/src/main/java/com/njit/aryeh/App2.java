@@ -1,41 +1,51 @@
 package com.njit.aryeh;
 
-import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.Bucket;
-import software.amazon.awssdk.services.s3.model.ListBucketsResponse;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.S3Exception;
-import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Publisher;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 
-import java.util.List;
-
-import software.amazon.awssdk.services.s3.S3Client;
-
+/**
+ * Hello world!
+ *
+ */
 public class App2 {
 	public static void main(String[] args) {
-		Region region = Region.US_EAST_1;
-        S3Client s3 = S3Client.builder()
-                .region(region)
-                .build();
+		String bucketName = "njit-cs-643";
+		String key = "1.jpg";
 
-        listBuckets(s3);
+		AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
+
+		try {
+			S3Object object = s3Client.getObject(new GetObjectRequest(bucketName, key));
+			InputStream objectData = object.getObjectContent();
+
+			byte[] imageBytes = readAllBytes(objectData);
+			System.out.println("done ...");
+
+			// Use the imageBytes as needed
+			// For example, you can display the image in a Swing application
+			// or process it using a library like OpenCV
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
-    public static void listBuckets(S3Client s3) {
-        try {
-            ListBucketsResponse response = s3.listBuckets();
-            List<Bucket> bucketList = response.buckets();
-            bucketList.forEach(bucket -> {
-                System.out.println("Bucket Name: " + bucket.name());
-            });
+	   private static byte[] readAllBytes(InputStream inputStream) throws IOException {
+	        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+	        int nRead;
+	        byte[] data = new byte[16384];
 
-        } catch (S3Exception e) {
-            System.err.println(e.awsErrorDetails().errorMessage());
-            System.exit(1);
-        }
-    }
+	        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+	            buffer.write(data, 0, nRead);
+	        }
 
+	        buffer.flush();
+	        return buffer.toByteArray();
+	    }
 }
