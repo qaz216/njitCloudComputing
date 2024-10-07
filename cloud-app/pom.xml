@@ -15,20 +15,37 @@
 	</properties>
 
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/regions -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>regions</artifactId>
+			<version>2.28.16</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-core -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-core</artifactId>
+			<version>1.12.773</version>
+		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/regions -->
+		<!---
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>regions</artifactId>
 			<version>2.28.13</version>
 		</dependency>
+		-->
 
-
+		<!--
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>s3</artifactId>
 			<version>2.16.29</version>
 		</dependency>
+		-->
 
 		<dependency>
 			<groupId>junit</groupId>
