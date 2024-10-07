@@ -3,11 +3,17 @@ package com.njit.aryeh;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 
 /**
  * Hello world!
@@ -18,34 +24,20 @@ public class App2 {
 		String bucketName = "njit-cs-643";
 		String key = "1.jpg";
 
-		AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
+		S3Client s3Client = S3Client.builder()
+			      .region(Region.US_EAST_1)
+			      .build();
 
-		try {
-			S3Object object = s3Client.getObject(new GetObjectRequest(bucketName, key));
-			InputStream objectData = object.getObjectContent();
+			    ListObjectsV2Request listObjectsV2Request = ListObjectsV2Request.builder()
+			      .bucket(bucketName)
+			      .build();
+			    ListObjectsV2Response listObjectsV2Response = s3Client.listObjectsV2(listObjectsV2Request);
 
-			byte[] imageBytes = readAllBytes(objectData);
-			System.out.println("done ...");
+			    List<S3Object> contents = listObjectsV2Response.contents();
 
-			// Use the imageBytes as needed
-			// For example, you can display the image in a Swing application
-			// or process it using a library like OpenCV
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			    System.out.println("Number of objects in the bucket: " + contents.stream().count());
+			    contents.stream().forEach(System.out::println);
+			    
+			    s3Client.close();
 	}
-	
-	   private static byte[] readAllBytes(InputStream inputStream) throws IOException {
-	        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-	        int nRead;
-	        byte[] data = new byte[16384];
-
-	        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
-	            buffer.write(data, 0, nRead);
-	        }
-
-	        buffer.flush();
-	        return buffer.toByteArray();
-	    }
 }
