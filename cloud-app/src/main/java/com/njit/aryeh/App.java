@@ -43,7 +43,6 @@ public class App {
         ListObjectsV2Response response;
         do {
             response = s3Client.listObjectsV2(request);
-            
 
             for (S3Object object : response.contents()) {
                 System.out.println(object.key());
