@@ -1,18 +1,13 @@
 package com.njit.aryeh;
 
-import java.io.InputStream;
 import java.util.List;
 
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
-import software.amazon.awssdk.core.ResponseBytes;
-import software.amazon.awssdk.core.ResponseInputStream;
 
 
 /**
@@ -40,7 +35,7 @@ public class App {
         S3Client s3Client = S3Client.builder()
                 .region(region)
                 .build();
-
+        
         ListObjectsV2Request request = ListObjectsV2Request.builder()
                 .bucket(bucketName)
                 .build();
@@ -48,21 +43,10 @@ public class App {
         ListObjectsV2Response response;
         do {
             response = s3Client.listObjectsV2(request);
+            
 
             for (S3Object object : response.contents()) {
                 System.out.println(object.key());
-                
-                GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                        .bucket(bucketName)
-                        .key(object.key())
-                        .build();
-
-                ResponseInputStream<GetObjectResponse> objectBytes = s3Client.getObject(getObjectRequest);
-
-                /*
-                byte[] objectData = objectBytes.asByteArray();
-                InputStream inputStream = getObjectResponse.response().body().asInputStream();
-                */
             }
 
             request = ListObjectsV2Request.builder()
