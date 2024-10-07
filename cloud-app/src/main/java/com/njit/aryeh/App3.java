@@ -8,8 +8,11 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.rekognition.RekognitionClient;
 import software.amazon.awssdk.services.rekognition.model.DetectLabelsRequest;
 import software.amazon.awssdk.services.rekognition.model.DetectLabelsResponse;
+import software.amazon.awssdk.services.rekognition.model.DetectTextRequest;
+import software.amazon.awssdk.services.rekognition.model.DetectTextResponse;
 import software.amazon.awssdk.services.rekognition.model.Image;
 import software.amazon.awssdk.services.rekognition.model.Label;
+import software.amazon.awssdk.services.rekognition.model.TextDetection;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
@@ -80,6 +83,21 @@ public class App3 {
 					List<Label> labels = labelsResponse.labels();
 					for (Label label : labels) {
 						System.out.println("label: " + label.name());
+					}
+
+					DetectTextRequest textRequest = DetectTextRequest.builder().image(souImage).build();
+
+					DetectTextResponse textResponse = rekClient.detectText(textRequest);
+
+					List<TextDetection> textCollection = textResponse.textDetections();
+					System.out.println("Detected lines and words");
+					for (TextDetection text : textCollection) {
+						System.out.println("Detected: " + text.detectedText());
+						System.out.println("Confidence: " + text.confidence().toString());
+						System.out.println("Id : " + text.id());
+						System.out.println("Parent Id: " + text.parentId());
+						System.out.println("Type: " + text.type());
+						System.out.println();
 					}
 
 				}
