@@ -1,6 +1,7 @@
 package com.njit.aryeh;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
@@ -50,14 +51,16 @@ public class TextRecognition {
 						exitLoop = true;
 						break;
 					}
+					
+					TimeUnit.MINUTES.sleep(5);
 				}
 				if(exitLoop) {
 					System.out.println("exiting loop");
 					break;
 				}
 
-			} catch (SqsException e) {
-				System.err.println(e.awsErrorDetails().errorMessage());
+			} catch (SqsException | InterruptedException e) {
+				e.printStackTrace();
 				System.exit(1);
 			}
 		}
