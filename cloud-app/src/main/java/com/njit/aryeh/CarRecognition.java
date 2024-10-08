@@ -20,7 +20,6 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
 public class CarRecognition {
-	public final Region REGION = Region.US_EAST_1;
 	private String bucketName = null;
 	private ProfileCredentialsProvider credentialsProvider;
 	private RekognitionClient rekClient;
@@ -31,7 +30,7 @@ public class CarRecognition {
 		this.credentialsProvider = ProfileCredentialsProvider.create();
 		this.rekClient = RekognitionClient.builder().credentialsProvider(this.credentialsProvider)
 				.region(Region.US_EAST_1).build();
-		this.s3Client = S3Client.builder().region(REGION).build();
+		this.s3Client = S3Client.builder().region(RecognitionApp.REGION).build();
 	}
 
 	public void processImages() {

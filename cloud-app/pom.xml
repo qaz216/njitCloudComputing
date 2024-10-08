@@ -45,6 +45,13 @@
 			<version>2.28.16</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/sqs -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>sqs</artifactId>
+			<version>2.28.17</version>
+		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/regions -->
 		<!---
