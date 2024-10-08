@@ -17,7 +17,6 @@ public class RecognitionApp {
 	public static final Region REGION = Region.US_EAST_1;
 	private Properties prop = null;
 	private SqsClient sqsClient = null;
-	private String queueName;
 	private ProfileCredentialsProvider credentialsProvider;
 	private RekognitionClient rekClient;
 
@@ -26,8 +25,6 @@ public class RecognitionApp {
 		try {
 			this.prop.load(RecognitionApp.class.getClassLoader().getResourceAsStream("application.properties"));
 
-			this.queueName = this.prop.getProperty("app.queue.name");
-			System.out.println("queueName: " + this.queueName);
 			this.sqsClient = SqsClient.builder().region(REGION).build();
 			//String queueUrl = createQueue(this.sqsClient, this.queueName);
 			//System.out.println("queueUrl: " + queueUrl);
@@ -50,6 +47,7 @@ public class RecognitionApp {
 			CarRecognition carReco = new CarRecognition(app.getBucketName(), 
 					                                    app.getSqsClient(), 
 					                                    app.getQueueName(),
+					                                    app.getGroupId(),
 					                                    app.getRekClient());
 			carReco.processImages();
 			TimeUnit.SECONDS.sleep(1000);
@@ -68,12 +66,17 @@ public class RecognitionApp {
 		return this.rekClient;
 	}
 
+
 	private String getMode() {
 		return this.prop.getProperty("app.mode");
 	}
 
 	private String getQueueName() {
-		return this.queueName;
+		return this.prop.getProperty("app.queue.name");
+	}
+
+	private String getGroupId() {
+		return this.prop.getProperty("app.queue.group.id");
 	}
 
 	private String getBucketName() {

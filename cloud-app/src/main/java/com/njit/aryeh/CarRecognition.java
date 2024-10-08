@@ -33,8 +33,9 @@ public class CarRecognition {
 	private S3Client s3Client;
 	private SqsClient sqsClient;
 	private String queueName;
+	private String groupId;
 
-	public CarRecognition(String bucketName, SqsClient sqsClient, String queueName, RekognitionClient rekClient) {
+	public CarRecognition(String bucketName, SqsClient sqsClient, String queueName, String groupId, RekognitionClient rekClient) {
 		this.bucketName = bucketName;
 		this.rekClient = rekClient;
 		this.s3Client = S3Client.builder().region(RecognitionApp.REGION).build();
@@ -124,8 +125,12 @@ public class CarRecognition {
 		GetQueueUrlRequest getQueueRequest = GetQueueUrlRequest.builder().queueName(queueName).build();
 
 		String queueUrl = sqsClient.getQueueUrl(getQueueRequest).queueUrl();
+		SendMessageRequest sendMsgRequest = SendMessageRequest.builder().queueUrl(queueUrl).messageBody(key).messageGroupId(this.groupId)
+				.build();
+		/*
 		SendMessageRequest sendMsgRequest = SendMessageRequest.builder().queueUrl(queueUrl).messageBody(key)
 				.delaySeconds(5).build();
+				*/
 
 		System.out.println("sending message for key: "+key);
 		sqsClient.sendMessage(sendMsgRequest);
