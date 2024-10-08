@@ -34,17 +34,14 @@ public class CarRecognition {
 	private SqsClient sqsClient;
 	private String queueName;
 	private String groupId;
-	private String dedupId;
 
-	public CarRecognition(String bucketName, SqsClient sqsClient, String queueName, String groupId, String dedupId, RekognitionClient rekClient) {
+	public CarRecognition(String bucketName, SqsClient sqsClient, String queueName, String groupId, RekognitionClient rekClient) {
 		this.bucketName = bucketName;
 		this.rekClient = rekClient;
 		this.s3Client = S3Client.builder().region(RecognitionApp.REGION).build();
 		this.sqsClient = sqsClient;
-		//String queueUrl = createQueue(this.sqsClient, this.queueName);
 		this.queueName = queueName;
 		this.groupId = groupId;
-		this.dedupId= dedupId;
 		createQueue(this.sqsClient, this.queueName);
 	}
 
@@ -129,12 +126,11 @@ public class CarRecognition {
 
 		String queueUrl = sqsClient.getQueueUrl(getQueueRequest).queueUrl();
 		System.out.println("group id: "+this.groupId);
-		System.out.println("dedup id: "+this.dedupId);
 		SendMessageRequest sendMsgRequest = SendMessageRequest.builder()
 				.queueUrl(queueUrl)
 				.messageBody(key)
 				.messageGroupId(this.groupId)
-				.messageDeduplicationId(this.dedupId+"-"+key)
+				.messageDeduplicationId(key)
 				.build();
 		/*
 		SendMessageRequest sendMsgRequest = SendMessageRequest.builder().queueUrl(queueUrl).messageBody(key)
