@@ -61,7 +61,8 @@ public class RecognitionApp {
 									                      app.getS3Client(),
 														  app.getSqsClient(), 
 					                                      app.getQueueName(),
-					                                      app.getRekClient());
+					                                      app.getRekClient(),
+					                                      app.getDeleteMessages());
 			textApp.receiveImages();
 		}
 	}
@@ -79,6 +80,10 @@ public class RecognitionApp {
 
 	private String getMode() {
 		return this.prop.getProperty("app.mode");
+	}
+
+	private Boolean getDeleteMessages() {
+		return Boolean.valueOf(prop.getProperty("app.delete.messages"));
 	}
 
 	private String getQueueName() {

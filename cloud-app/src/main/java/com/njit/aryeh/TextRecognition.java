@@ -28,9 +28,10 @@ public class TextRecognition {
 	private String bucketName;
 	private S3Client s3Client;
 	private RekognitionClient rekClient;
+	private Boolean deleteMessages;
 
 	public TextRecognition(String bucketName, S3Client s3Client, SqsClient sqsClient, String queueName,
-			RekognitionClient rekClient) {
+			RekognitionClient rekClient, Boolean deleteMessages) {
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
 		this.bucketName = bucketName;
@@ -57,7 +58,7 @@ public class TextRecognition {
 					String messageBody = message.body();
 					System.out.println("message: " + messageBody);
 					Image img = this.getImage(messageBody, bucketName);
-					
+
 					DetectTextRequest textRequest = DetectTextRequest.builder().image(img).build();
 
 					DetectTextResponse textResponse = rekClient.detectText(textRequest);
@@ -72,16 +73,14 @@ public class TextRecognition {
 						System.out.println("Type: " + text.type());
 						System.out.println();
 					}
-					
-					
-					DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(queueUrl)
-							.receiptHandle(message.receiptHandle()).build();
-					sqsClient.deleteMessage(deleteMessageRequest);
-					/*
-					 * DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder()
-					 * .queueUrl(queueUrl) .receiptHandle(message.receiptHandle()) .build();
-					 * sqsClient.deleteMessage(deleteMessageRequest);
-					 */
+
+
+					if (this.deleteMessages) {
+						DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(queueUrl)
+								.receiptHandle(message.receiptHandle()).build();
+						sqsClient.deleteMessage(deleteMessageRequest);
+					}
+
 					if (messageBody.equals("-1")) {
 						System.out.println("-1 received ... exiting");
 						exitLoop = true;
