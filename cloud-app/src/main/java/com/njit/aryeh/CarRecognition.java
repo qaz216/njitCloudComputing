@@ -31,6 +31,7 @@ public class CarRecognition {
 	}
 
 	public void processImages() {
+		System.out.println("got here ...");
 		ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create();
 		RekognitionClient rekClient = RekognitionClient.builder().credentialsProvider(credentialsProvider)
 				.region(Region.US_EAST_1).build();
