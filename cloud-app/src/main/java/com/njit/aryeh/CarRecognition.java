@@ -134,7 +134,7 @@ public class CarRecognition {
 				.queueUrl(queueUrl)
 				.messageBody(key)
 				.messageGroupId(this.groupId)
-				.messageDeduplicationId(this.dedupId)
+				.messageDeduplicationId(this.dedupId+"-"+key)
 				.build();
 		/*
 		SendMessageRequest sendMsgRequest = SendMessageRequest.builder().queueUrl(queueUrl).messageBody(key)
