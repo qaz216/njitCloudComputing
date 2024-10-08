@@ -55,6 +55,7 @@ public class RecognitionApp {
 		else if(mode.equals("text_recognition")) {
 			System.out.println("text recognition called ...");
 			TextRecognition textApp = new TextRecognition(app.getSqsClient(), app.getQueueName());
+			textApp.receiveImages();
 		}
 	}
 	
