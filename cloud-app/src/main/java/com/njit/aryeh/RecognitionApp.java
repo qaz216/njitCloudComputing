@@ -43,15 +43,18 @@ public class RecognitionApp {
 		System.out.println("Recognition Application starting ...");
 		RecognitionApp app = new RecognitionApp();
 		String mode = app.getMode();
-		String bucketName = app.getBucketName();
 		System.out.println("mode = " + mode);
 		if (mode.equals("car_recognition")) {
 			System.out.println("car recognition called ...");
-			CarRecognition carReco = new CarRecognition(bucketName, 
+			CarRecognition carReco = new CarRecognition(app.getBucketName(), 
 					                                    app.getSqsClient(), 
 					                                    app.getQueueName(),
 					                                    app.getRekClient());
 			carReco.processImages();
+		}
+		else if(mode.equals("text_recognition")) {
+			System.out.println("text recognition called ...");
+			TextRecognition textApp = new TextRecognition();
 		}
 	}
 

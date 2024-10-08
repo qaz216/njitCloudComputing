@@ -24,7 +24,6 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 public class CarRecognition {
 	private String bucketName = null;
-	//private ProfileCredentialsProvider credentialsProvider;
 	private RekognitionClient rekClient;
 	private S3Client s3Client;
 	private SqsClient sqsClient;
@@ -32,9 +31,7 @@ public class CarRecognition {
 
 	public CarRecognition(String bucketName, SqsClient sqsClient, String queueName, RekognitionClient rekClient) {
 		this.bucketName = bucketName;
-		//this.credentialsProvider = ProfileCredentialsProvider.create();
 		this.rekClient = rekClient;
-		//		.region(Region.US_EAST_1).build();
 		this.s3Client = S3Client.builder().region(RecognitionApp.REGION).build();
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
