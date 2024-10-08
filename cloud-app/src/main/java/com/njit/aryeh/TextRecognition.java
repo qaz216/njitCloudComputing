@@ -34,10 +34,17 @@ public class TextRecognition {
 					String messageBody = message.body();
 					System.out.println("message: " + messageBody);
 					DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder()
+	                        .queueUrl(queueUrl)
+	                        .receiptHandle(message.receiptHandle())
+	                        .build();
+	                sqsClient.deleteMessage(deleteMessageRequest);
+					/*
+					DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder()
                             .queueUrl(queueUrl)
                             .receiptHandle(message.receiptHandle())
                             .build();
                     sqsClient.deleteMessage(deleteMessageRequest);
+                    */
 					if(messageBody.equals("-1")) {
 						System.out.println("-1 received ... exiting");
 						exitLoop = true;
