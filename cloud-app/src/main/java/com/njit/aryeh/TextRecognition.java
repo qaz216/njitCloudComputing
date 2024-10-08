@@ -53,6 +53,7 @@ public class TextRecognition {
 						.build();
 				List<Message> messages = sqsClient.receiveMessage(receiveMessageRequest).messages();
 
+				System.out.println("message size: "+messages.size());
 				for (Message message : messages) {
 					String messageBody = message.body();
 					System.out.println("message: " + messageBody);
