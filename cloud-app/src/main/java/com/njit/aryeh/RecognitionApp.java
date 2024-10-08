@@ -23,6 +23,7 @@ public class RecognitionApp {
 		System.out.println("mode = " + mode);
 		if(mode.equals("car_recognition")) {
 			CarRecognition carReco = new CarRecognition(bucketName);
+			carReco.processImages();
 		}
 	}
 	
