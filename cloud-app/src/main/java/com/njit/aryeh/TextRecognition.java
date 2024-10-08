@@ -64,16 +64,17 @@ public class TextRecognition {
 					DetectTextResponse textResponse = rekClient.detectText(textRequest);
 
 					List<TextDetection> textCollection = textResponse.textDetections();
-					System.out.println("Detected lines and words");
-					for (TextDetection text : textCollection) {
-						System.out.println("Detected: " + text.detectedText());
-						System.out.println("Confidence: " + text.confidence().toString());
-						System.out.println("Id : " + text.id());
-						System.out.println("Parent Id: " + text.parentId());
-						System.out.println("Type: " + text.type());
-						System.out.println();
+					if (textCollection != null) {
+						System.out.println("Detected lines and words");
+						for (TextDetection text : textCollection) {
+							System.out.println("Detected: " + text.detectedText());
+							System.out.println("Confidence: " + text.confidence().toString());
+							System.out.println("Id : " + text.id());
+							System.out.println("Parent Id: " + text.parentId());
+							System.out.println("Type: " + text.type());
+							System.out.println();
+						}
 					}
-
 
 					if (this.deleteMessages) {
 						DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(queueUrl)
