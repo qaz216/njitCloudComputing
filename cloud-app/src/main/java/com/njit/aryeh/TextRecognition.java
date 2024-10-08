@@ -56,7 +56,7 @@ public class TextRecognition {
 				for (Message message : messages) {
 					String messageBody = message.body();
 					System.out.println("message: " + messageBody);
-					Image img = this.getImage(messageBody, queueUrl);
+					Image img = this.getImage(messageBody, bucketName);
 					
 					DetectTextRequest textRequest = DetectTextRequest.builder().image(img).build();
 
