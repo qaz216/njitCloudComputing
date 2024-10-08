@@ -3,6 +3,7 @@ package com.njit.aryeh;
 import java.util.List;
 
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.Message;
@@ -19,6 +20,7 @@ public class TextRecognition {
 	}
 
 	public void receiveImages() {
+		boolean exitLoop = false;
 		while (true) {
 			try {
 				GetQueueUrlResponse getQueueUrlResponse = sqsClient
@@ -31,10 +33,20 @@ public class TextRecognition {
 				for (Message message : messages) {
 					String messageBody = message.body();
 					System.out.println("message: " + messageBody);
+					DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder()
+                            .queueUrl(queueUrl)
+                            .receiptHandle(message.receiptHandle())
+                            .build();
+                    sqsClient.deleteMessage(deleteMessageRequest);
 					if(messageBody.equals("-1")) {
 						System.out.println("-1 received ... exiting");
+						exitLoop = true;
 						break;
 					}
+				}
+				if(exitLoop) {
+					System.out.println("exiting loop");
+					break;
 				}
 
 			} catch (SqsException e) {
