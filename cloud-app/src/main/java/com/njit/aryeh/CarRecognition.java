@@ -125,6 +125,7 @@ public class CarRecognition {
 		GetQueueUrlRequest getQueueRequest = GetQueueUrlRequest.builder().queueName(queueName).build();
 
 		String queueUrl = sqsClient.getQueueUrl(getQueueRequest).queueUrl();
+		System.out.println("group id: "+this.groupId);
 		SendMessageRequest sendMsgRequest = SendMessageRequest.builder().queueUrl(queueUrl).messageBody(key).messageGroupId(this.groupId)
 				.build();
 		/*
