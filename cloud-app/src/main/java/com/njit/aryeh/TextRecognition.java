@@ -29,8 +29,8 @@ public class TextRecognition {
 						.maxNumberOfMessages(5).build();
 				List<Message> messages = sqsClient.receiveMessage(receiveMessageRequest).messages();
 				for (Message message : messages) {
-					System.out.println("message: " + message.body());
 					String messageBody = message.body();
+					System.out.println("message: " + messageBody);
 					if(messageBody.equals("-1")) {
 						System.out.println("-1 received ... exiting");
 						break;
