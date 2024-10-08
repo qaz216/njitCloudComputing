@@ -31,6 +31,10 @@ public class TextRecognition {
 				ReceiveMessageRequest receiveMessageRequest = ReceiveMessageRequest.builder().queueUrl(queueUrl)
 						.build();
 				List<Message> messages = sqsClient.receiveMessage(receiveMessageRequest).messages();
+				if(messages.size() == 0) {
+					System.out.println("no new messages");
+					break;
+				}
 				for (Message message : messages) {
 					String messageBody = message.body();
 					System.out.println("message: " + messageBody);
