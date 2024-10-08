@@ -52,7 +52,7 @@ public class TextRecognition {
 						break;
 					}
 					
-					TimeUnit.SECONDS.sleep(5);
+					TimeUnit.SECONDS.sleep(2);
 				}
 				if(exitLoop) {
 					System.out.println("exiting loop");
