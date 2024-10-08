@@ -30,11 +30,12 @@ public class TextRecognition {
 	private RekognitionClient rekClient;
 
 	public TextRecognition(String bucketName, S3Client s3Client, SqsClient sqsClient, String queueName,
-			RekognitionClient rekognitionClient) {
+			RekognitionClient rekClient) {
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
 		this.bucketName = bucketName;
 		this.s3Client = s3Client;
+		this.rekClient = rekClient;
 	}
 
 	public void receiveImages() {

@@ -61,7 +61,6 @@ public class RecognitionApp {
 									                      app.getS3Client(),
 														  app.getSqsClient(), 
 					                                      app.getQueueName(),
-					                                      app.getRekClient(),
 					                                      app.getRekClient());
 			textApp.receiveImages();
 		}
