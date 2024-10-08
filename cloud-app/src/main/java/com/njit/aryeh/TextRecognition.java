@@ -57,8 +57,9 @@ public class TextRecognition {
 				for (Message message : messages) {
 					String messageBody = message.body();
 					System.out.println("message: " + messageBody);
-					Image img = this.getImage(messageBody, bucketName);
 
+					/*
+					Image img = this.getImage(messageBody, bucketName);
 					DetectTextRequest textRequest = DetectTextRequest.builder().image(img).build();
 
 					DetectTextResponse textResponse = rekClient.detectText(textRequest);
@@ -75,6 +76,7 @@ public class TextRecognition {
 							System.out.println();
 						}
 					}
+					*/
 
 					if (this.deleteMessages) {
 						System.out.println("deleting messages");
