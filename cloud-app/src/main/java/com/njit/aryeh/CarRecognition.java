@@ -25,18 +25,26 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 public class CarRecognition {
 	private String bucketName = null;
 	public final Region REGION = Region.US_EAST_1;
+	private ProfileCredentialsProvider credentialsProvider;
+	private RekognitionClient rekClient;
+	private S3Client s3Client;
 
 	public CarRecognition(String bucketName) {
 		this.bucketName = bucketName;
+		this.credentialsProvider = ProfileCredentialsProvider.create();
+		this.rekClient = RekognitionClient.builder().credentialsProvider(credentialsProvider)
+				.region(Region.US_EAST_1).build();
+		this.s3Client = S3Client.builder().region(REGION).build();
 	}
 
 	public void processImages() {
 		System.out.println("got here ...");
+		/*
 		ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create();
 		RekognitionClient rekClient = RekognitionClient.builder().credentialsProvider(credentialsProvider)
 				.region(Region.US_EAST_1).build();
-
 		S3Client s3Client = S3Client.builder().region(REGION).build();
+		*/
 		ListObjectsV2Request request = ListObjectsV2Request.builder().bucket(bucketName).build();
 		try {
 			ListObjectsV2Response response;
