@@ -48,6 +48,7 @@ public class RecognitionApp {
 					                                    app.getSqsClient(), 
 					                                    app.getQueueName(),
 					                                    app.getGroupId(),
+					                                    app.getDedupId(),
 					                                    app.getRekClient());
 			carReco.processImages();
 			TimeUnit.SECONDS.sleep(1000);
@@ -77,6 +78,10 @@ public class RecognitionApp {
 
 	private String getGroupId() {
 		return this.prop.getProperty("app.queue.group.id");
+	}
+
+	private String getDedupId() {
+		return this.prop.getProperty("app.queue.dedup.id");
 	}
 
 	private String getBucketName() {
