@@ -77,6 +77,7 @@ public class TextRecognition {
 					}
 
 					if (this.deleteMessages) {
+						System.out.println("deleting messages");
 						DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(queueUrl)
 								.receiptHandle(message.receiptHandle()).build();
 						sqsClient.deleteMessage(deleteMessageRequest);
