@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.rekognition.RekognitionClient;
+import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
@@ -19,6 +20,7 @@ public class RecognitionApp {
 	private SqsClient sqsClient = null;
 	private ProfileCredentialsProvider credentialsProvider;
 	private RekognitionClient rekClient;
+	private S3Client s3Client = S3Client.builder().region(RecognitionApp.REGION).build();;
 
 	public RecognitionApp() {
 		this.prop = new Properties();
@@ -45,6 +47,7 @@ public class RecognitionApp {
 		if (mode.equals("car_recognition")) {
 			System.out.println("car recognition called ...");
 			CarRecognition carReco = new CarRecognition(app.getBucketName(), 
+													    app.getS3Client(),
 					                                    app.getSqsClient(), 
 					                                    app.getQueueName(),
 					                                    app.getGroupId(),
@@ -54,7 +57,12 @@ public class RecognitionApp {
 		}
 		else if(mode.equals("text_recognition")) {
 			System.out.println("text recognition called ...");
-			TextRecognition textApp = new TextRecognition(app.getSqsClient(), app.getQueueName());
+			TextRecognition textApp = new TextRecognition(app.getBucketName(),
+									                      app.getS3Client(),
+														  app.getSqsClient(), 
+					                                      app.getQueueName(),
+					                                      app.getRekClient(),
+					                                      app.getRekClient());
 			textApp.receiveImages();
 		}
 	}
@@ -62,10 +70,13 @@ public class RecognitionApp {
 
 
 
+	private S3Client getS3Client() {
+		return this.s3Client;
+	}
+	
 	private RekognitionClient getRekClient() {
 		return this.rekClient;
 	}
-
 
 	private String getMode() {
 		return this.prop.getProperty("app.mode");

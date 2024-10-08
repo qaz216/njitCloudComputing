@@ -35,13 +35,14 @@ public class CarRecognition {
 	private String queueName;
 	private String groupId;
 
-	public CarRecognition(String bucketName, SqsClient sqsClient, String queueName, String groupId, RekognitionClient rekClient) {
+	public CarRecognition(String bucketName, S3Client s3Client, SqsClient sqsClient, String queueName, String groupId, RekognitionClient rekClient) {
 		this.bucketName = bucketName;
 		this.rekClient = rekClient;
 		this.s3Client = S3Client.builder().region(RecognitionApp.REGION).build();
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
 		this.groupId = groupId;
+		this.s3Client = s3Client;
 		createQueue(this.sqsClient, this.queueName);
 	}
 
