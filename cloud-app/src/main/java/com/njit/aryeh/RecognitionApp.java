@@ -3,7 +3,9 @@ package com.njit.aryeh;
 import java.io.IOException;
 import java.util.Properties;
 
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.rekognition.RekognitionClient;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
@@ -15,6 +17,8 @@ public class RecognitionApp {
 	private Properties prop = null;
 	private SqsClient sqsClient = null;
 	private String queueName;
+	private ProfileCredentialsProvider credentialsProvider;
+	private RekognitionClient rekClient;
 
 	public RecognitionApp() {
 		this.prop = new Properties();
@@ -26,6 +30,10 @@ public class RecognitionApp {
 			this.sqsClient = SqsClient.builder().region(REGION).build();
 			String queueUrl = createQueue(this.sqsClient, this.queueName);
 			System.out.println("queueUrl: " + queueUrl);
+			
+			this.credentialsProvider = ProfileCredentialsProvider.create();
+			this.rekClient = RekognitionClient.builder().credentialsProvider(this.credentialsProvider)
+					.region(Region.US_EAST_1).build();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -39,7 +47,10 @@ public class RecognitionApp {
 		System.out.println("mode = " + mode);
 		if (mode.equals("car_recognition")) {
 			System.out.println("car recognition called ...");
-			CarRecognition carReco = new CarRecognition(bucketName, app.getSqsClient(), app.getQueueName());
+			CarRecognition carReco = new CarRecognition(bucketName, 
+					                                    app.getSqsClient(), 
+					                                    app.getQueueName(),
+					                                    app.getRekClient());
 			carReco.processImages();
 		}
 	}
@@ -63,6 +74,10 @@ public class RecognitionApp {
 			System.exit(1);
 		}
 		return "";
+	}
+
+	private RekognitionClient getRekClient() {
+		return this.rekClient;
 	}
 
 	private String getMode() {
