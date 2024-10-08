@@ -11,21 +11,20 @@ import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.SqsException;
 
 public class RecognitionApp {
-	private Properties prop = null;
 	public static final Region REGION = Region.US_EAST_1;
+	private Properties prop = null;
+	private SqsClient sqsClient = null;
+	private String queueName;
 
 	public RecognitionApp() {
 		this.prop = new Properties();
 		try {
 			this.prop.load(RecognitionApp.class.getClassLoader().getResourceAsStream("application.properties"));
 
-			String queueName = this.prop.getProperty("app.queue.name");
-			System.out.println("queueName: " + queueName);
-
-			SqsClient sqsClient = SqsClient.builder().region(REGION).build();
-
-			// Perform various tasks on the Amazon SQS queue.
-			String queueUrl = createQueue(sqsClient, queueName);
+			this.queueName = this.prop.getProperty("app.queue.name");
+			System.out.println("queueName: " + this.queueName);
+			this.sqsClient = SqsClient.builder().region(REGION).build();
+			String queueUrl = createQueue(this.sqsClient, this.queueName);
 			System.out.println("queueUrl: " + queueUrl);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -40,7 +39,7 @@ public class RecognitionApp {
 		System.out.println("mode = " + mode);
 		if (mode.equals("car_recognition")) {
 			System.out.println("car recognition called ...");
-			CarRecognition carReco = new CarRecognition(bucketName);
+			CarRecognition carReco = new CarRecognition(bucketName, app.getSqsClient(), app.getQueueName());
 			carReco.processImages();
 		}
 	}
@@ -70,7 +69,15 @@ public class RecognitionApp {
 		return this.prop.getProperty("app.mode");
 	}
 
+	private String getQueueName() {
+		return this.queueName;
+	}
+
 	private String getBucketName() {
 		return this.prop.getProperty("app.bucket");
+	}
+	
+	private SqsClient getSqsClient() {
+		return this.sqsClient;
 	}
 }

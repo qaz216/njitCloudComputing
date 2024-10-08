@@ -18,19 +18,26 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
+import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 public class CarRecognition {
 	private String bucketName = null;
 	private ProfileCredentialsProvider credentialsProvider;
 	private RekognitionClient rekClient;
 	private S3Client s3Client;
+	private SqsClient sqsClient;
+	private String queueName;
 
-	public CarRecognition(String bucketName) {
+	public CarRecognition(String bucketName, SqsClient sqsClient, String queueName) {
 		this.bucketName = bucketName;
 		this.credentialsProvider = ProfileCredentialsProvider.create();
 		this.rekClient = RekognitionClient.builder().credentialsProvider(this.credentialsProvider)
 				.region(Region.US_EAST_1).build();
 		this.s3Client = S3Client.builder().region(RecognitionApp.REGION).build();
+		this.sqsClient = sqsClient;
+		this.queueName = queueName;
 	}
 
 	public void processImages() {
@@ -42,10 +49,10 @@ public class CarRecognition {
 
 				for (S3Object object : response.contents()) {
 					String key = object.key();
-					System.out.println("processing image: "+key);
+					System.out.println("processing image: " + key);
 
-					GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(this.bucketName).key(object.key())
-							.build();
+					GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(this.bucketName)
+							.key(object.key()).build();
 
 					ResponseInputStream<GetObjectResponse> responseBytes = this.s3Client.getObject(getObjectRequest);
 
@@ -63,9 +70,11 @@ public class CarRecognition {
 					for (Label label : labels) {
 						String labelName = label.name().toLowerCase().trim();
 						Float confidence = label.confidence();
-						if(labelName.equals("car") &&  confidence >= 90.0) {
+						if (labelName.equals("car") && confidence >= 90.0) {
 							System.out.println("Found a car with confidence over 90%");
-							System.out.println("image name: " + key + " label: " + labelName + " confidence: " + confidence);
+							System.out.println(
+									"image name: " + key + " label: " + labelName + " confidence: " + confidence);
+							this.sendQueueMessage(key);
 						}
 					}
 
@@ -76,6 +85,19 @@ public class CarRecognition {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+	}
+
+	private void sendQueueMessage(String key) {
+		GetQueueUrlRequest getQueueRequest = GetQueueUrlRequest.builder().queueName(queueName).build();
+
+		String queueUrl = sqsClient.getQueueUrl(getQueueRequest).queueUrl();
+		SendMessageRequest sendMsgRequest = SendMessageRequest.builder().queueUrl(queueUrl).messageBody(key)
+				.delaySeconds(5).build();
+
+		System.out.println("sending message for key: "+key);
+		sqsClient.sendMessage(sendMsgRequest);
+		System.out.println("sent message for key: "+key);
 
 	}
 }
