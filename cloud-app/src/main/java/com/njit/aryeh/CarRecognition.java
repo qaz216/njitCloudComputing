@@ -42,6 +42,7 @@ public class CarRecognition {
 		this.sqsClient = sqsClient;
 		//String queueUrl = createQueue(this.sqsClient, this.queueName);
 		this.queueName = queueName;
+		this.groupId = groupId;
 		createQueue(this.sqsClient, this.queueName);
 	}
 
