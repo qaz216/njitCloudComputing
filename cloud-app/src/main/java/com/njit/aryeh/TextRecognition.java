@@ -30,6 +30,11 @@ public class TextRecognition {
 				List<Message> messages = sqsClient.receiveMessage(receiveMessageRequest).messages();
 				for (Message message : messages) {
 					System.out.println("message: " + message.body());
+					String messageBody = message.body();
+					if(messageBody.equals("-1")) {
+						System.out.println("-1 received ... exiting");
+						break;
+					}
 				}
 
 			} catch (SqsException e) {

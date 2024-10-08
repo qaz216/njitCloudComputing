@@ -51,7 +51,7 @@ public class CarRecognition {
 
 				for (S3Object object : response.contents()) {
 					String key = object.key();
-					System.out.println("processing image: " + key);
+					//System.out.println("processing image: " + key);
 
 					GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(this.bucketName)
 							.key(object.key()).build();
@@ -73,7 +73,7 @@ public class CarRecognition {
 						String labelName = label.name().toLowerCase().trim();
 						Float confidence = label.confidence();
 						if (labelName.equals("car") && confidence >= 90.0) {
-							System.out.println("Found a car with confidence over 90%");
+							//System.out.println("Found a car with confidence over 90%");
 							System.out.println(
 									"image name: " + key + " label: " + labelName + " confidence: " + confidence);
 							this.sendQueueMessage(key);
@@ -83,6 +83,9 @@ public class CarRecognition {
 					request = ListObjectsV2Request.builder().bucket(this.bucketName)
 							.continuationToken(response.nextContinuationToken()).build();
 				}
+				System.out.println("sending -1");
+				this.sendQueueMessage("-1");
+
 			} while (response.isTruncated());
 		} catch (IOException e) {
 			e.printStackTrace();
