@@ -52,7 +52,7 @@ public class RecognitionApp {
 					                                    app.getQueueName(),
 					                                    app.getRekClient());
 			carReco.processImages();
-			TimeUnit.MINUTES.sleep(100);
+			TimeUnit.SECONDS.sleep(1000);
 		}
 		else if(mode.equals("text_recognition")) {
 			System.out.println("text recognition called ...");
