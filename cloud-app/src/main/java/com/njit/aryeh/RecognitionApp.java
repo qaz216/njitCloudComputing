@@ -57,12 +57,17 @@ public class RecognitionApp {
 		}
 		else if(mode.equals("text_recognition")) {
 			System.out.println("text recognition called ...");
+			/*
 			TextRecognition textApp = new TextRecognition(app.getBucketName(),
 									                      app.getS3Client(),
 														  app.getSqsClient(), 
 					                                      app.getQueueName(),
 					                                      app.getRekClient(),
 					                                      app.getDeleteMessages());
+					                                      */
+			TextRecognition textApp = new TextRecognition( app.getSqsClient(), 
+					                                      app.getQueueName(),
+					                                      app.getRekClient());
 			textApp.receiveImages();
 		}
 	}
