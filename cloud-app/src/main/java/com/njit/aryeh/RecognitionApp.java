@@ -2,6 +2,7 @@ package com.njit.aryeh;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -39,7 +40,7 @@ public class RecognitionApp {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		System.out.println("Recognition Application starting ...");
 		RecognitionApp app = new RecognitionApp();
 		String mode = app.getMode();
@@ -51,6 +52,7 @@ public class RecognitionApp {
 					                                    app.getQueueName(),
 					                                    app.getRekClient());
 			carReco.processImages();
+			TimeUnit.MINUTES.sleep(100);
 		}
 		else if(mode.equals("text_recognition")) {
 			System.out.println("text recognition called ...");
