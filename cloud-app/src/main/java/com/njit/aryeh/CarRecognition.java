@@ -37,9 +37,9 @@ public class CarRecognition {
 		this.rekClient = rekClient;
 		this.s3Client = S3Client.builder().region(RecognitionApp.REGION).build();
 		this.sqsClient = sqsClient;
+		//String queueUrl = createQueue(this.sqsClient, this.queueName);
+		createQueue(this.sqsClient, this.queueName);
 		this.queueName = queueName;
-		String queueUrl = createQueue(this.sqsClient, this.queueName);
-		System.out.println("queueUrl: " + queueUrl);
 	}
 
 	public void processImages() {
