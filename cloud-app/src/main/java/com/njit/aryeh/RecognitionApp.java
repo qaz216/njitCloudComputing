@@ -28,8 +28,8 @@ public class RecognitionApp {
 			this.queueName = this.prop.getProperty("app.queue.name");
 			System.out.println("queueName: " + this.queueName);
 			this.sqsClient = SqsClient.builder().region(REGION).build();
-			String queueUrl = createQueue(this.sqsClient, this.queueName);
-			System.out.println("queueUrl: " + queueUrl);
+			//String queueUrl = createQueue(this.sqsClient, this.queueName);
+			//System.out.println("queueUrl: " + queueUrl);
 			
 			this.credentialsProvider = ProfileCredentialsProvider.create();
 			this.rekClient = RekognitionClient.builder().credentialsProvider(this.credentialsProvider)
@@ -58,26 +58,6 @@ public class RecognitionApp {
 		}
 	}
 
-	public static String createQueue(SqsClient sqsClient, String queueName) {
-		try {
-			System.out.println("\nCreate Queue");
-
-			CreateQueueRequest createQueueRequest = CreateQueueRequest.builder().queueName(queueName).build();
-
-			sqsClient.createQueue(createQueueRequest);
-
-			System.out.println("\nGet queue url");
-
-			GetQueueUrlResponse getQueueUrlResponse = sqsClient
-					.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build());
-			return getQueueUrlResponse.queueUrl();
-
-		} catch (SqsException e) {
-			System.err.println(e.awsErrorDetails().errorMessage());
-			System.exit(1);
-		}
-		return "";
-	}
 
 	private RekognitionClient getRekClient() {
 		return this.rekClient;

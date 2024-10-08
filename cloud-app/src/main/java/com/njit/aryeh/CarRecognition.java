@@ -19,8 +19,11 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
+import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
+import software.amazon.awssdk.services.sqs.model.SqsException;
 
 public class CarRecognition {
 	private String bucketName = null;
@@ -35,6 +38,8 @@ public class CarRecognition {
 		this.s3Client = S3Client.builder().region(RecognitionApp.REGION).build();
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
+		String queueUrl = createQueue(this.sqsClient, this.queueName);
+		System.out.println("queueUrl: " + queueUrl);
 	}
 
 	public void processImages() {
@@ -83,6 +88,27 @@ public class CarRecognition {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public static String createQueue(SqsClient sqsClient, String queueName) {
+		try {
+			System.out.println("\nCreate Queue");
+
+			CreateQueueRequest createQueueRequest = CreateQueueRequest.builder().queueName(queueName).build();
+
+			sqsClient.createQueue(createQueueRequest);
+
+			System.out.println("\nGet queue url");
+
+			GetQueueUrlResponse getQueueUrlResponse = sqsClient
+					.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build());
+			return getQueueUrlResponse.queueUrl();
+
+		} catch (SqsException e) {
+			System.err.println(e.awsErrorDetails().errorMessage());
+			System.exit(1);
+		}
+		return "";
 	}
 
 	private void sendQueueMessage(String key) {
