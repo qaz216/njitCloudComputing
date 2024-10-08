@@ -50,7 +50,7 @@ public class RecognitionApp {
 					                                    app.getGroupId(),
 					                                    app.getRekClient());
 			carReco.processImages();
-			TimeUnit.SECONDS.sleep(1000);
+			//TimeUnit.SECONDS.sleep(1000);
 		}
 		else if(mode.equals("text_recognition")) {
 			System.out.println("text recognition called ...");
