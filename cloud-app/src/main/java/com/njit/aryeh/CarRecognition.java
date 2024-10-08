@@ -94,6 +94,7 @@ public class CarRecognition {
 		try {
 			System.out.println("\nCreate Queue");
 
+			System.out.println("queue name: "+queueName);
 			CreateQueueRequest createQueueRequest = CreateQueueRequest.builder().queueName(queueName).build();
 
 			sqsClient.createQueue(createQueueRequest);
