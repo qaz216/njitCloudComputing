@@ -2,6 +2,7 @@ package com.njit.aryeh;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -22,6 +23,7 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
+import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SqsException;
 
@@ -98,7 +100,10 @@ public class CarRecognition {
 			System.out.println("\nCreate Queue");
 
 			System.out.println("queue name: "+queueName);
-			CreateQueueRequest createQueueRequest = CreateQueueRequest.builder().queueName(queueName).build();
+			CreateQueueRequest createQueueRequest = CreateQueueRequest
+					.builder()
+					.attributes(Map.of(QueueAttributeName.FIFO_QUEUE, "true"))
+					.queueName(queueName).build();
 
 			sqsClient.createQueue(createQueueRequest);
 
