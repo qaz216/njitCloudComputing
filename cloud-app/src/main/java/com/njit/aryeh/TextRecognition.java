@@ -83,6 +83,17 @@ public class TextRecognition {
 
 					List<TextDetection> textCollection = textResponse.textDetections();
 
+					if (textCollection != null) {
+						System.out.println("Detected lines and words");
+						for (TextDetection text : textCollection) {
+							System.out.println("Detected: " + text.detectedText());
+							System.out.println("Confidence: " + text.confidence().toString());
+							System.out.println("Id : " + text.id());
+							System.out.println("Parent Id: " + text.parentId());
+							System.out.println("Type: " + text.type());
+							System.out.println();
+						}
+					}
 
 
 					TimeUnit.SECONDS.sleep(2);
