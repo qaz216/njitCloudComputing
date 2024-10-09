@@ -67,7 +67,6 @@ public class RecognitionApp {
 					                                      */
 			TextRecognition textApp = new TextRecognition(app.getBucketName(),
 							                              app.getSqsClient(), 
-					                                      app.getQueueName(),
 					                                      app.getDeleteMessages());
 			textApp.receiveImages();
 		}
