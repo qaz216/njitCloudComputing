@@ -76,6 +76,7 @@ public class TextRecognition {
 						break;
 					}
 					
+					/*
 					Image img = this.getImage(messageBody, bucketName);
 					DetectTextRequest textRequest = DetectTextRequest.builder().image(img).build();
 
@@ -94,6 +95,7 @@ public class TextRecognition {
 							System.out.println();
 						}
 					}
+					*/
 
 
 					TimeUnit.SECONDS.sleep(2);
