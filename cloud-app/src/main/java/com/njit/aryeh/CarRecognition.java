@@ -3,6 +3,7 @@ package com.njit.aryeh;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -86,12 +87,14 @@ public class CarRecognition {
 
 					request = ListObjectsV2Request.builder().bucket(this.bucketName)
 							.continuationToken(response.nextContinuationToken()).build();
+					
+					TimeUnit.SECONDS.sleep(5);
 				}
 				System.out.println("sending -1");
 				this.sendQueueMessage("-1");
 
 			} while (response.isTruncated());
-		} catch (IOException e) {
+		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 
