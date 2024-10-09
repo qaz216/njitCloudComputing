@@ -80,6 +80,7 @@ public class TextRecognition {
 					DetectTextRequest textRequest = DetectTextRequest.builder().image(img).build();
 					DetectTextResponse textResponse = rekClient.detectText(textRequest);
 
+					/*
 					List<TextDetection> textCollection = textResponse.textDetections();
 					if (textCollection != null) {
 						System.out.println("Detected lines and words");
@@ -92,6 +93,8 @@ public class TextRecognition {
 							System.out.println();
 						}
 					}
+					*/
+					System.out.println("finished text collection ...");
 
 
 
