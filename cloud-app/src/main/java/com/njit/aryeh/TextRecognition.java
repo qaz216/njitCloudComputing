@@ -30,7 +30,7 @@ public class TextRecognition {
 	private S3Client s3Client;
 	private RekognitionClient rekClient;
 
-	public TextRecognition(String bucketName, S3Client s3Client, SqsClient sqsClient, String queueName, RekognitionClient rekognitionClient,
+	public TextRecognition(String bucketName, S3Client s3Client, SqsClient sqsClient, String queueName, RekognitionClient rekClient,
 			Boolean deleteMessages) {
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
