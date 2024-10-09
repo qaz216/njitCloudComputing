@@ -96,7 +96,7 @@ public class TextRecognition2 {
 					DetectTextResponse textResponse = rekClient.detectText(textRequest);
 
 					List<TextDetection> textCollection = textResponse.textDetections();
-					System.out.println("Detected lines and words");
+					System.out.println("Detected lines and words: "+textCollection.size());
 					for (TextDetection text : textCollection) {
 						System.out.println("Detected: " + text.detectedText());
 						System.out.println("Confidence: " + text.confidence().toString());
