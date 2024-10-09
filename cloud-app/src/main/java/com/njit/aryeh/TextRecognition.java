@@ -15,10 +15,13 @@ import software.amazon.awssdk.services.sqs.model.SqsException;
 public class TextRecognition {
 	private SqsClient sqsClient;
 	private String queueName;
+	private Boolean deleteMessages;
 
-	public TextRecognition(SqsClient sqsClient, String queueName, RekognitionClient rekognitionClient) {
+	public TextRecognition(SqsClient sqsClient, String queueName, RekognitionClient rekognitionClient,
+			Boolean deleteMessages) {
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
+		this.deleteMessages = deleteMessages;
 	}
 
 	public void receiveImages() {
@@ -32,34 +35,34 @@ public class TextRecognition {
 				ReceiveMessageRequest receiveMessageRequest = ReceiveMessageRequest.builder().queueUrl(queueUrl)
 						.build();
 				List<Message> messages = sqsClient.receiveMessage(receiveMessageRequest).messages();
-				if(messages.size() == 0) {
+				if (messages.size() == 0) {
 					System.out.println("no new messages");
 					break;
 				}
 				for (Message message : messages) {
 					String messageBody = message.body();
 					System.out.println("message: " + messageBody);
-					DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder()
-	                        .queueUrl(queueUrl)
-	                        .receiptHandle(message.receiptHandle())
-	                        .build();
-	                sqsClient.deleteMessage(deleteMessageRequest);
+
+					System.out.println("delete msg: "+this.deleteMessages);
+					if (this.deleteMessages) {
+						DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(queueUrl)
+								.receiptHandle(message.receiptHandle()).build();
+						sqsClient.deleteMessage(deleteMessageRequest);
+					}
 					/*
-					DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder()
-                            .queueUrl(queueUrl)
-                            .receiptHandle(message.receiptHandle())
-                            .build();
-                    sqsClient.deleteMessage(deleteMessageRequest);
-                    */
-					if(messageBody.equals("-1")) {
+					 * DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder()
+					 * .queueUrl(queueUrl) .receiptHandle(message.receiptHandle()) .build();
+					 * sqsClient.deleteMessage(deleteMessageRequest);
+					 */
+					if (messageBody.equals("-1")) {
 						System.out.println("-1 received ... exiting");
 						exitLoop = true;
 						break;
 					}
-					
+
 					TimeUnit.SECONDS.sleep(2);
 				}
-				if(exitLoop) {
+				if (exitLoop) {
 					System.out.println("exiting loop");
 					break;
 				}

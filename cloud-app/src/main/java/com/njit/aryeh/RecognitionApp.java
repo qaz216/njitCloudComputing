@@ -65,9 +65,10 @@ public class RecognitionApp {
 					                                      app.getRekClient(),
 					                                      app.getDeleteMessages());
 					                                      */
-			TextRecognition textApp = new TextRecognition( app.getSqsClient(), 
+			TextRecognition textApp = new TextRecognition(app.getSqsClient(), 
 					                                      app.getQueueName(),
-					                                      app.getRekClient());
+					                                      app.getRekClient(),
+					                                      app.getDeleteMessages());
 			textApp.receiveImages();
 		}
 	}
