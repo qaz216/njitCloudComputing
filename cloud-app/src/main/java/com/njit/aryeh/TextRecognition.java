@@ -13,10 +13,12 @@ import software.amazon.awssdk.services.sqs.model.SqsException;
 public class TextRecognition {
 	private SqsClient sqsClient;
 	private String queueName;
+	private Boolean deleteMessages;
 
-	public TextRecognition(SqsClient sqsClient, String queueName) {
+	public TextRecognition(SqsClient sqsClient, String queueName, Boolean deleteMessages) {
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
+		this.deleteMessages = deleteMessages;
 	}
 
 	public void receiveImages() {
@@ -33,18 +35,19 @@ public class TextRecognition {
 				for (Message message : messages) {
 					String messageBody = message.body();
 					System.out.println("message: " + messageBody);
-					DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder()
-                            .queueUrl(queueUrl)
-                            .receiptHandle(message.receiptHandle())
-                            .build();
-                    sqsClient.deleteMessage(deleteMessageRequest);
-					if(messageBody.equals("-1")) {
+
+					if (this.deleteMessages) {
+						DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(queueUrl)
+								.receiptHandle(message.receiptHandle()).build();
+						sqsClient.deleteMessage(deleteMessageRequest);
+					}
+					if (messageBody.equals("-1")) {
 						System.out.println("-1 received ... exiting");
 						exitLoop = true;
 						break;
 					}
 				}
-				if(exitLoop) {
+				if (exitLoop) {
 					System.out.println("exiting loop");
 					break;
 				}
