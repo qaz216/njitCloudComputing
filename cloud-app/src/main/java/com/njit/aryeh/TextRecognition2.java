@@ -5,7 +5,11 @@ import java.util.List;
 
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.services.rekognition.RekognitionClient;
+import software.amazon.awssdk.services.rekognition.model.DetectLabelsRequest;
+import software.amazon.awssdk.services.rekognition.model.DetectLabelsResponse;
 import software.amazon.awssdk.services.rekognition.model.Image;
+import software.amazon.awssdk.services.rekognition.model.Label;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
@@ -22,12 +26,18 @@ public class TextRecognition2 {
 	private S3Client s3Client;
 	private String queueName;
 	private String bucketName;
+	private RekognitionClient rekClient;
 
-	public TextRecognition2(String bucketName, SqsClient sqsClient, S3Client s3Client, String queueName) {
+	public TextRecognition2(String bucketName, 
+			                SqsClient sqsClient, 
+			                S3Client s3Client, 
+			                String queueName, 
+			                RekognitionClient rekClient) {
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
 		this.bucketName = bucketName;
 		this.s3Client = s3Client;
+		this.rekClient = rekClient;
 	}
 
 	public void receiveImages() {
@@ -65,6 +75,16 @@ public class TextRecognition2 {
 
 					SdkBytes sourceBytes = SdkBytes.fromByteArray(bytes);
 					Image souImage = Image.builder().bytes(sourceBytes).build();
+					
+					DetectLabelsRequest detectLabelsRequest = DetectLabelsRequest.builder().image(souImage)
+							.maxLabels(10).build();
+					
+					DetectLabelsResponse labelsResponse = rekClient.detectLabels(detectLabelsRequest);
+
+					List<Label> labels = labelsResponse.labels();
+					for (Label label : labels) {
+						System.out.println("label: " + label.name());
+					}
 					
 					
 				}

@@ -75,7 +75,8 @@ public class RecognitionApp {
 			TextRecognition2 textApp = new TextRecognition2(app.getBucketName(),
 														    app.getSqsClient(),
 														    app.getS3Client(),
-													        app.getQueueName());
+													        app.getQueueName(),
+													        app.getRekClient());
 			textApp.receiveImages();
 		}
 	}
