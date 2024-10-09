@@ -34,7 +34,7 @@ public class TextRecognition2 {
 					String messageBody = message.body();
 					System.out.println("message: " + messageBody);
 
-					if (true) {
+					if (false) {
 						DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(queueUrl)
 								.receiptHandle(message.receiptHandle()).build();
 						sqsClient.deleteMessage(deleteMessageRequest);
