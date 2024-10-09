@@ -77,8 +77,8 @@ public class TextRecognition {
 					}
 					
 					Image img = this.getImage(messageBody, bucketName);
-					DetectTextRequest textRequest = DetectTextRequest.builder().image(img).build();
-					DetectTextResponse textResponse = rekClient.detectText(textRequest);
+					//DetectTextRequest textRequest = DetectTextRequest.builder().image(img).build();
+					//DetectTextResponse textResponse = rekClient.detectText(textRequest);
 
 					/*
 					List<TextDetection> textCollection = textResponse.textDetections();
