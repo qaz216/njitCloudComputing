@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.rekognition.RekognitionClient;
+import software.amazon.awssdk.services.rekognition.model.DetectTextRequest;
 import software.amazon.awssdk.services.rekognition.model.Image;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -72,6 +73,8 @@ public class TextRecognition {
 					}
 					
 					Image img = this.getImage(messageBody, bucketName);
+					DetectTextRequest textRequest = DetectTextRequest.builder().image(img).build();
+
 
 
 					TimeUnit.SECONDS.sleep(2);
