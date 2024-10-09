@@ -36,7 +36,7 @@ public class TextRecognition {
 				List<Message> messages = sqsClient.receiveMessage(receiveMessageRequest).messages();
 				if (messages.size() == 0) {
 					System.out.println("no new messages");
-					break;
+					continue;
 				}
 				for (Message message : messages) {
 					String messageBody = message.body();
