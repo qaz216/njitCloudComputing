@@ -66,6 +66,7 @@ public class RecognitionApp {
 					                                      app.getDeleteMessages());
 					                                      */
 			TextRecognition textApp = new TextRecognition(app.getBucketName(),
+								                          app.getS3Client(),
 							                              app.getSqsClient(), 
 					                                      app.getQueueName(),
 					                                      app.getRekClient(),

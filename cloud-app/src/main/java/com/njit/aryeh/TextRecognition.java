@@ -1,10 +1,16 @@
 package com.njit.aryeh;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.rekognition.RekognitionClient;
 import software.amazon.awssdk.services.rekognition.model.Image;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
@@ -18,8 +24,9 @@ public class TextRecognition {
 	private String queueName;
 	private String bucketName;
 	private Boolean deleteMessages;
+    private S3Client s3Client;
 
-	public TextRecognition(String bucketName, SqsClient sqsClient, String queueName, RekognitionClient rekognitionClient,
+	public TextRecognition(String bucketName, S3Client s3Client, SqsClient sqsClient, String queueName, RekognitionClient rekClient,
 			Boolean deleteMessages) {
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
@@ -63,7 +70,7 @@ public class TextRecognition {
 						break;
 					}
 					
-					//Image img = this.getImage(messageBody, bucketName);
+					Image img = this.getImage(messageBody, bucketName);
 
 
 					TimeUnit.SECONDS.sleep(2);
@@ -80,6 +87,18 @@ public class TextRecognition {
 		}
 	}
 	
+	private Image getImage(String key, String bucketName) {
+		try {
+			GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucketName).key(key).build();
+			ResponseInputStream<GetObjectResponse> responseBytes = this.s3Client.getObject(getObjectRequest);
+			byte[] bytes = responseBytes.readAllBytes();
+			SdkBytes sourceBytes = SdkBytes.fromByteArray(bytes);
+			return Image.builder().bytes(sourceBytes).build();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	
 
