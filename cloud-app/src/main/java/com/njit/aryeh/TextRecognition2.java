@@ -2,6 +2,7 @@ package com.njit.aryeh;
 
 import java.util.List;
 
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
@@ -13,10 +14,12 @@ import software.amazon.awssdk.services.sqs.model.SqsException;
 public class TextRecognition2 {
 	private SqsClient sqsClient;
 	private String queueName;
+	private String bucketName;
 
-	public TextRecognition2(SqsClient sqsClient, String queueName) {
+	public TextRecognition2(String bucketName, SqsClient sqsClient, String queueName) {
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
+		this.bucketName = bucketName;
 	}
 
 	public void receiveImages() {
@@ -34,17 +37,18 @@ public class TextRecognition2 {
 					String messageBody = message.body();
 					System.out.println("message: " + messageBody);
 
-					if (false) {
-						DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(queueUrl)
-								.receiptHandle(message.receiptHandle()).build();
-						sqsClient.deleteMessage(deleteMessageRequest);
-					}
+					DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(queueUrl)
+							.receiptHandle(message.receiptHandle()).build();
+					sqsClient.deleteMessage(deleteMessageRequest);
 
 					if (messageBody.equals("-1")) {
 						System.out.println("-1 received ... exiting");
 						exitLoop = true;
 						break;
 					}
+					
+					GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucketName).key(messageBody)
+							.build();
 				}
 				if (exitLoop) {
 					System.out.println("exiting loop");
