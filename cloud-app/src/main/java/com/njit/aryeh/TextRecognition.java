@@ -8,7 +8,9 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.rekognition.RekognitionClient;
 import software.amazon.awssdk.services.rekognition.model.DetectTextRequest;
+import software.amazon.awssdk.services.rekognition.model.DetectTextResponse;
 import software.amazon.awssdk.services.rekognition.model.Image;
+import software.amazon.awssdk.services.rekognition.model.TextDetection;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
@@ -26,6 +28,7 @@ public class TextRecognition {
 	private String bucketName;
 	private Boolean deleteMessages;
 	private S3Client s3Client;
+	private RekognitionClient rekClient;
 
 	public TextRecognition(String bucketName, S3Client s3Client, SqsClient sqsClient, String queueName, RekognitionClient rekognitionClient,
 			Boolean deleteMessages) {
@@ -74,6 +77,20 @@ public class TextRecognition {
 					
 					Image img = this.getImage(messageBody, bucketName);
 					DetectTextRequest textRequest = DetectTextRequest.builder().image(img).build();
+					DetectTextResponse textResponse = rekClient.detectText(textRequest);
+
+					List<TextDetection> textCollection = textResponse.textDetections();
+					if (textCollection != null) {
+						System.out.println("Detected lines and words");
+						for (TextDetection text : textCollection) {
+							System.out.println("Detected: " + text.detectedText());
+							System.out.println("Confidence: " + text.confidence().toString());
+							System.out.println("Id : " + text.id());
+							System.out.println("Parent Id: " + text.parentId());
+							System.out.println("Type: " + text.type());
+							System.out.println();
+						}
+					}
 
 
 
