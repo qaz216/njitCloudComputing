@@ -37,6 +37,7 @@ public class TextRecognition {
 		this.deleteMessages = deleteMessages;
 		this.bucketName = bucketName;
 		this.s3Client = s3Client;
+		this.rekClient = rekClient;
 	}
 
 	public void receiveImages() {
