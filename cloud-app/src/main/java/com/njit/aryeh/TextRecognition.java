@@ -2,7 +2,6 @@ package com.njit.aryeh;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.SdkBytes;
@@ -24,17 +23,18 @@ import software.amazon.awssdk.services.sqs.model.SqsException;
 
 public class TextRecognition {
 	private SqsClient sqsClient;
+	private S3Client s3Client;
 	private String queueName;
 	private String bucketName;
-	private Boolean deleteMessages;
-	private S3Client s3Client;
 	private RekognitionClient rekClient;
 
-	public TextRecognition(String bucketName, S3Client s3Client, SqsClient sqsClient, String queueName, RekognitionClient rekClient,
-			Boolean deleteMessages) {
+	public TextRecognition(String bucketName, 
+			                SqsClient sqsClient, 
+			                S3Client s3Client, 
+			                String queueName, 
+			                RekognitionClient rekClient) {
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
-		this.deleteMessages = deleteMessages;
 		this.bucketName = bucketName;
 		this.s3Client = s3Client;
 		this.rekClient = rekClient;
@@ -49,79 +49,59 @@ public class TextRecognition {
 				String queueUrl = getQueueUrlResponse.queueUrl();
 				System.out.println("queue url: " + queueUrl);
 				ReceiveMessageRequest receiveMessageRequest = ReceiveMessageRequest.builder().queueUrl(queueUrl)
-						.build();
+						.maxNumberOfMessages(5).build();
 				List<Message> messages = sqsClient.receiveMessage(receiveMessageRequest).messages();
-				if (messages.size() == 0) {
-					System.out.println("no new messages");
-					break;
-				}
 				for (Message message : messages) {
 					String messageBody = message.body();
 					System.out.println("message: " + messageBody);
 
-					System.out.println("delete msg: "+this.deleteMessages);
-					if (true) {
-						DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(queueUrl)
-								.receiptHandle(message.receiptHandle()).build();
-						sqsClient.deleteMessage(deleteMessageRequest);
-					}
-					/*
-					 * DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder()
-					 * .queueUrl(queueUrl) .receiptHandle(message.receiptHandle()) .build();
-					 * sqsClient.deleteMessage(deleteMessageRequest);
-					 */
+					DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(queueUrl)
+							.receiptHandle(message.receiptHandle()).build();
+					sqsClient.deleteMessage(deleteMessageRequest);
+
 					if (messageBody.equals("-1")) {
 						System.out.println("-1 received ... exiting");
 						exitLoop = true;
 						break;
 					}
 					
-					Image img = this.getImage(messageBody, bucketName);
-					DetectTextRequest textRequest = DetectTextRequest.builder().image(img).build();
+					GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucketName).key(messageBody)
+							.build();
+					
+					ResponseInputStream<GetObjectResponse> responseBytes = s3Client.getObject(getObjectRequest);
+					
+					byte[] bytes = responseBytes.readAllBytes();
+
+					SdkBytes sourceBytes = SdkBytes.fromByteArray(bytes);
+					Image souImage = Image.builder().bytes(sourceBytes).build();
+					
+					DetectTextRequest textRequest = DetectTextRequest.builder().image(souImage).build();
 					DetectTextResponse textResponse = rekClient.detectText(textRequest);
 
 					List<TextDetection> textCollection = textResponse.textDetections();
-					if (textCollection != null) {
-						System.out.println("Detected lines and words");
-						for (TextDetection text : textCollection) {
-							System.out.println("Detected: " + text.detectedText());
-							System.out.println("Confidence: " + text.confidence().toString());
-							System.out.println("Id : " + text.id());
-							System.out.println("Parent Id: " + text.parentId());
-							System.out.println("Type: " + text.type());
-							System.out.println();
-						}
+					System.out.println("Detected lines and words: "+textCollection.size()+" - "+messageBody);
+					for (TextDetection text : textCollection) {
+						System.out.println("Detected: " + text.detectedText());
+						System.out.println("Confidence: " + text.confidence().toString());
+						System.out.println("Id : " + text.id());
+						System.out.println("Parent Id: " + text.parentId());
+						System.out.println("Type: " + text.type());
+						System.out.println();
 					}
 
-
-
-					TimeUnit.SECONDS.sleep(2);
+					
+					
 				}
 				if (exitLoop) {
 					System.out.println("exiting loop");
 					break;
 				}
 
-			} catch (SqsException | InterruptedException e) {
+			} catch (SqsException | IOException e) {
 				e.printStackTrace();
-				System.exit(1);
 			}
 		}
+
 	}
-	
-	private Image getImage(String key, String bucketName) {
-		try {
-			GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucketName).key(key).build();
-			ResponseInputStream<GetObjectResponse> responseBytes = this.s3Client.getObject(getObjectRequest);
-			byte[] bytes = responseBytes.readAllBytes();
-			SdkBytes sourceBytes = SdkBytes.fromByteArray(bytes);
-			return Image.builder().bytes(sourceBytes).build();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	
 
 }

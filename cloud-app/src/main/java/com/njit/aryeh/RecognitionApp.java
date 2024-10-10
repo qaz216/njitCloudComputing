@@ -2,17 +2,12 @@ package com.njit.aryeh;
 
 import java.io.IOException;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.rekognition.RekognitionClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.sqs.SqsClient;
-import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
-import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
-import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
-import software.amazon.awssdk.services.sqs.model.SqsException;
 
 public class RecognitionApp {
 	public static final Region REGION = Region.US_EAST_1;
@@ -26,11 +21,7 @@ public class RecognitionApp {
 		this.prop = new Properties();
 		try {
 			this.prop.load(RecognitionApp.class.getClassLoader().getResourceAsStream("application.properties"));
-
 			this.sqsClient = SqsClient.builder().region(REGION).build();
-			//String queueUrl = createQueue(this.sqsClient, this.queueName);
-			//System.out.println("queueUrl: " + queueUrl);
-			
 			this.credentialsProvider = ProfileCredentialsProvider.create();
 			this.rekClient = RekognitionClient.builder().credentialsProvider(this.credentialsProvider)
 					.region(Region.US_EAST_1).build();
@@ -45,34 +36,19 @@ public class RecognitionApp {
 		String mode = app.getMode();
 		System.out.println("mode = " + mode);
 		if (mode.equals("car_recognition")) {
-			System.out.println("car recognition called ...");
+			System.out.println("running car recognition node ...");
 			CarRecognition carReco = new CarRecognition(app.getBucketName(), 
 													    app.getS3Client(),
 					                                    app.getSqsClient(), 
 					                                    app.getQueueName(),
 					                                    app.getGroupId(),
-					                                    app.getRekClient());
+					                                    app.getRekClient(),
+					                                    app.getCarRecoDelay());
 			carReco.processImages();
-			//TimeUnit.SECONDS.sleep(1000);
 		}
 		else if(mode.equals("text_recognition")) {
-			System.out.println("text recognition called ...");
-			/*
+			System.out.println("running text recognition node ...");
 			TextRecognition textApp = new TextRecognition(app.getBucketName(),
-									                      app.getS3Client(),
-														  app.getSqsClient(), 
-					                                      app.getQueueName(),
-					                                      app.getRekClient(),
-					                                      app.getDeleteMessages());
-			*/
-			/*
-			TextRecognition textApp = new TextRecognition(app.getSqsClient(),
-													      app.getQueueName(),
-													      app.getDeleteMessages());
-													      */
-			/*
-			 */
-			TextRecognition2 textApp = new TextRecognition2(app.getBucketName(),
 														    app.getSqsClient(),
 														    app.getS3Client(),
 													        app.getQueueName(),
@@ -88,16 +64,16 @@ public class RecognitionApp {
 		return this.s3Client;
 	}
 	
+	private int getCarRecoDelay() {
+		return Integer.valueOf(this.prop.getProperty("app.mode"));
+	}
+
 	private RekognitionClient getRekClient() {
 		return this.rekClient;
 	}
 
 	private String getMode() {
 		return this.prop.getProperty("app.mode");
-	}
-
-	private Boolean getDeleteMessages() {
-		return Boolean.valueOf(prop.getProperty("app.delete.messages"));
 	}
 
 	private String getQueueName() {
