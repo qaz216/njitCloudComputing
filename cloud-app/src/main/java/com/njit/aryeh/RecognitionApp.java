@@ -52,7 +52,8 @@ public class RecognitionApp {
 														    app.getSqsClient(),
 														    app.getS3Client(),
 													        app.getQueueName(),
-													        app.getRekClient());
+													        app.getRekClient(),
+													        app.getOutputFile());
 			textApp.receiveImages();
 		}
 	}
@@ -74,6 +75,10 @@ public class RecognitionApp {
 
 	private String getMode() {
 		return this.prop.getProperty("app.mode");
+	}
+
+	private String getOutputFile() {
+		return this.prop.getProperty("app.file.location");
 	}
 
 	private String getQueueName() {

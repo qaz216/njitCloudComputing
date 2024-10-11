@@ -1,6 +1,9 @@
 package com.njit.aryeh;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -26,21 +29,24 @@ public class TextRecognition {
 	private S3Client s3Client;
 	private String queueName;
 	private String bucketName;
+	private String outputFile;
 	private RekognitionClient rekClient;
 
 	public TextRecognition(String bucketName, SqsClient sqsClient, S3Client s3Client, String queueName,
-			RekognitionClient rekClient) {
+			RekognitionClient rekClient, String outputFile) {
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
 		this.bucketName = bucketName;
 		this.s3Client = s3Client;
 		this.rekClient = rekClient;
+		this.outputFile = outputFile;
 	}
 
 	public void receiveImages() {
+		StringBuilder output = new StringBuilder();
 		boolean exitLoop = false;
-		while (true) {
-			try {
+		try {
+			while (true) {
 				GetQueueUrlResponse getQueueUrlResponse = sqsClient
 						.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build());
 				String queueUrl = getQueueUrlResponse.queueUrl();
@@ -77,8 +83,10 @@ public class TextRecognition {
 					for (TextDetection text : textCollection) {
 						String textDetected = text.detectedText();
 						Float confidence = text.confidence();
-						System.out.println("Text detected for image: " + messageBody + " - text: " + textDetected
-								+ " - confidence: " + confidence);
+						String line = "Text detected for image: " + messageBody + " - text: " + textDetected
+								+ " - confidence: " + confidence;
+						System.out.println(line);
+						output.append(line + "\n");
 					}
 
 				}
@@ -86,10 +94,16 @@ public class TextRecognition {
 					System.out.println("exiting loop");
 					break;
 				}
-
-			} catch (SqsException | IOException e) {
-				e.printStackTrace();
 			}
+			
+			Path filePath = Paths.get(outputFile);
+			Files.deleteIfExists(filePath);
+			byte[] strToBytes = output.toString().getBytes();
+		    Files.write(filePath, strToBytes);
+
+
+		} catch (SqsException | IOException e) {
+			e.printStackTrace();
 		}
 
 	}
