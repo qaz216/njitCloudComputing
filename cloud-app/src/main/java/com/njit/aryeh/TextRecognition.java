@@ -99,8 +99,8 @@ public class TextRecognition {
 			Path filePath = Paths.get(outputFile);
 			Files.deleteIfExists(filePath);
 			byte[] strToBytes = output.toString().getBytes();
+			System.out.println("writing to file: "+outputFile);
 		    Files.write(filePath, strToBytes);
-
 
 		} catch (SqsException | IOException e) {
 			e.printStackTrace();

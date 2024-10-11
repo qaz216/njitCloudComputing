@@ -105,17 +105,13 @@ public class CarRecognition {
 	
 	public static String createQueue(SqsClient sqsClient, String queueName) {
 		try {
-			System.out.println("\nCreate Queue");
-			System.out.println("queue name: "+queueName);
+			System.out.println("Creating queue: " + queueName);
 			CreateQueueRequest createQueueRequest = CreateQueueRequest
 					.builder()
 					.attributes(Map.of(QueueAttributeName.FIFO_QUEUE, "true"))
 					.queueName(queueName).build();
 
 			sqsClient.createQueue(createQueueRequest);
-
-			System.out.println("\nGet queue url");
-
 			GetQueueUrlResponse getQueueUrlResponse = sqsClient
 					.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build());
 			return getQueueUrlResponse.queueUrl();
