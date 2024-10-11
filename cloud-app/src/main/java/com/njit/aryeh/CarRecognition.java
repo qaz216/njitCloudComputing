@@ -84,7 +84,7 @@ public class CarRecognition {
 						Float confidence = label.confidence();
 						if (labelName.equals("car") && confidence >= 90.0) {
 							System.out.println(
-									"image name: " + key + " label: " + labelName + " confidence: " + confidence);
+									"image name: " + key + " - label: " + labelName + " - confidence: " + confidence);
 							this.sendQueueMessage(key);
 						}
 					}
@@ -106,7 +106,6 @@ public class CarRecognition {
 	public static String createQueue(SqsClient sqsClient, String queueName) {
 		try {
 			System.out.println("\nCreate Queue");
-
 			System.out.println("queue name: "+queueName);
 			CreateQueueRequest createQueueRequest = CreateQueueRequest
 					.builder()
@@ -132,16 +131,13 @@ public class CarRecognition {
 		GetQueueUrlRequest getQueueRequest = GetQueueUrlRequest.builder().queueName(queueName).build();
 
 		String queueUrl = sqsClient.getQueueUrl(getQueueRequest).queueUrl();
-		System.out.println("group id: "+this.groupId);
 		SendMessageRequest sendMsgRequest = SendMessageRequest.builder()
 				.queueUrl(queueUrl)
 				.messageBody(key)
 				.messageGroupId(this.groupId)
 				.messageDeduplicationId(key)
 				.build();
-		System.out.println("sending message for key: "+key);
 		sqsClient.sendMessage(sendMsgRequest);
-		System.out.println("sent message for key: "+key);
 
 	}
 }

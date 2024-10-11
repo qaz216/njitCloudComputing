@@ -47,7 +47,6 @@ public class TextRecognition {
 				GetQueueUrlResponse getQueueUrlResponse = sqsClient
 						.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build());
 				String queueUrl = getQueueUrlResponse.queueUrl();
-				System.out.println("queue url: " + queueUrl);
 				ReceiveMessageRequest receiveMessageRequest = ReceiveMessageRequest.builder().queueUrl(queueUrl)
 						.maxNumberOfMessages(5).build();
 				List<Message> messages = sqsClient.receiveMessage(receiveMessageRequest).messages();
