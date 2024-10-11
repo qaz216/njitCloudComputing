@@ -28,11 +28,8 @@ public class TextRecognition {
 	private String bucketName;
 	private RekognitionClient rekClient;
 
-	public TextRecognition(String bucketName, 
-			                SqsClient sqsClient, 
-			                S3Client s3Client, 
-			                String queueName, 
-			                RekognitionClient rekClient) {
+	public TextRecognition(String bucketName, SqsClient sqsClient, S3Client s3Client, String queueName,
+			RekognitionClient rekClient) {
 		this.sqsClient = sqsClient;
 		this.queueName = queueName;
 		this.bucketName = bucketName;
@@ -52,7 +49,6 @@ public class TextRecognition {
 				List<Message> messages = sqsClient.receiveMessage(receiveMessageRequest).messages();
 				for (Message message : messages) {
 					String messageBody = message.body();
-					System.out.println("message: " + messageBody);
 
 					DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder().queueUrl(queueUrl)
 							.receiptHandle(message.receiptHandle()).build();
@@ -63,33 +59,28 @@ public class TextRecognition {
 						exitLoop = true;
 						break;
 					}
-					
+
 					GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucketName).key(messageBody)
 							.build();
-					
+
 					ResponseInputStream<GetObjectResponse> responseBytes = s3Client.getObject(getObjectRequest);
-					
+
 					byte[] bytes = responseBytes.readAllBytes();
 
 					SdkBytes sourceBytes = SdkBytes.fromByteArray(bytes);
 					Image souImage = Image.builder().bytes(sourceBytes).build();
-					
+
 					DetectTextRequest textRequest = DetectTextRequest.builder().image(souImage).build();
 					DetectTextResponse textResponse = rekClient.detectText(textRequest);
 
 					List<TextDetection> textCollection = textResponse.textDetections();
-					System.out.println("Detected lines and words: "+textCollection.size()+" - "+messageBody);
 					for (TextDetection text : textCollection) {
-						System.out.println("Detected: " + text.detectedText());
-						System.out.println("Confidence: " + text.confidence().toString());
-						System.out.println("Id : " + text.id());
-						System.out.println("Parent Id: " + text.parentId());
-						System.out.println("Type: " + text.type());
-						System.out.println();
+						String textDetected = text.detectedText();
+						Float confidence = text.confidence();
+						System.out.println("Text detected for image: " + messageBody + " - text: " + textDetected
+								+ " - confidence: " + confidence);
 					}
 
-					
-					
 				}
 				if (exitLoop) {
 					System.out.println("exiting loop");
