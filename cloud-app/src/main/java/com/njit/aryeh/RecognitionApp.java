@@ -65,7 +65,7 @@ public class RecognitionApp {
 	}
 	
 	private int getCarRecoDelay() {
-		return Integer.valueOf(this.prop.getProperty("app.mode"));
+		return Integer.valueOf(this.prop.getProperty("app.car.recognition.delay"));
 	}
 
 	private RekognitionClient getRekClient() {

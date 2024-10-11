@@ -139,11 +139,6 @@ public class CarRecognition {
 				.messageGroupId(this.groupId)
 				.messageDeduplicationId(key)
 				.build();
-		/*
-		SendMessageRequest sendMsgRequest = SendMessageRequest.builder().queueUrl(queueUrl).messageBody(key)
-				.delaySeconds(5).build();
-				*/
-
 		System.out.println("sending message for key: "+key);
 		sqsClient.sendMessage(sendMsgRequest);
 		System.out.println("sent message for key: "+key);
