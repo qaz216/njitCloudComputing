@@ -83,9 +83,8 @@ public class TextRecognition {
 					for (TextDetection text : textCollection) {
 						String textDetected = text.detectedText();
 						Float confidence = text.confidence();
-						String line = "Text detected for image: " + messageBody + " - text: " + textDetected
-								+ " - confidence: " + confidence;
-						System.out.println(line);
+						String line = messageBody + " - text: " + textDetected + " - confidence: " + confidence;
+						System.out.println("Text detected for image: "+ line);
 						output.append(line + "\n");
 					}
 
