@@ -1,2 +1,2 @@
-# njitCloudComputing
-Projects for NJIT Cloud Computing Course1
+Course Overview# njitCloudComputing
+---------------------
