@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -8,12 +9,10 @@
 	<version>1.0-SNAPSHOT</version>
 	<name>cloud-app</name>
 	<url>http://maven.apache.org</url>
-
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
-
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/regions -->
 		<dependency>
@@ -21,14 +20,12 @@
 			<artifactId>regions</artifactId>
 			<version>2.28.16</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/s3 -->
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>s3</artifactId>
 			<version>2.28.16</version>
 		</dependency>
-
 		<!--
 		https://mvnrepository.com/artifact/software.amazon.awssdk/rekognition -->
 		<dependency>
@@ -36,7 +33,6 @@
 			<artifactId>rekognition</artifactId>
 			<version>2.28.16</version>
 		</dependency>
-
 		<!--
 		https://mvnrepository.com/artifact/software.amazon.awssdk/rekognition -->
 		<dependency>
@@ -44,39 +40,17 @@
 			<artifactId>rekognition</artifactId>
 			<version>2.28.16</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/sqs -->
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>sqs</artifactId>
 			<version>2.28.17</version>
 		</dependency>
-
-
-		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/regions -->
-		<!---
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>regions</artifactId>
-			<version>2.28.13</version>
-		</dependency>
-		-->
-
-		<!--
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>s3</artifactId>
-			<version>2.16.29</version>
-		</dependency>
-		-->
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
-
-
 	</dependencies>
 </project>
