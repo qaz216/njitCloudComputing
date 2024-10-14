@@ -1,2 +1,2 @@
-Course Overview# njitCloudComputing
+Cloud Computing NJIT Masters Course 
 ---------------------
